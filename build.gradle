@@ -1,0 +1,55 @@
+apply plugin: 'application'
+
+group 'de.kaleidox'
+version '0.10-SNAPSHOT'
+
+apply from: 'gradle/vars.gradle'
+
+mainClassName = 'de.kaleidox.modVote.ModVote'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.findByName('wrapper')?.configure {
+    gradleVersion = '6.2'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    maven { url 'https://maven.comroid.org' }
+    mavenLocal()
+    jcenter()
+    maven { url 'https://www.jitpack.io' }
+}
+
+if (!isAutoDeploy) {
+    evaluationDependsOn ':guardian:uniform'
+    evaluationDependsOn ':guardian:restless'
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:21.0.0'
+
+    if (isAutoDeploy) {
+        implementation 'org.comroid:status-api:0.+'
+        implementation 'org.comroid:restless:0.+'
+        implementation 'org.comroid:CrystalShard:0.+'
+    } else {
+        implementation project(':status:status-api')
+
+        implementation project(':guardian:uniform').sourceSets.java8compat.output.classesDirs
+        implementation project(':guardian:restless').sourceSets.java8compat.output.classesDirs
+
+        implementation project(':CrystalShard')
+    }
+
+    // logging dependencies
+    implementation 'org.apache.logging.log4j:log4j-api:2.11.0'
+    runtimeOnly 'org.apache.logging.log4j:log4j-core:2.11.0'
+
+    // runtime adapter dependencies
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2' // todo Make Optional
+    implementation 'com.alibaba:fastjson:1.2.70'
+}
