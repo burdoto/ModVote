@@ -4,6 +4,7 @@ import org.comroid.common.io.FileHandle;
 import org.comroid.crystalshard.DiscordAPI;
 import org.comroid.crystalshard.DiscordBotBase;
 import org.comroid.crystalshard.gateway.GatewayIntent;
+import org.comroid.crystalshard.ui.InteractionCore;
 
 public final class ModVote extends DiscordBotBase {
     public static final FileHandle dir;
@@ -18,6 +19,10 @@ public final class ModVote extends DiscordBotBase {
 
     public static void main(String[] args) throws Throwable {
         instance.initialize();
+
+        InteractionCore core = instance.getInteractionCore();
+        core.getCommands().readClass(ModVoteCommands.class);
+        core.synchronizeGlobal();
     }
 
     public ModVote(DiscordAPI context, String token, GatewayIntent... intents) {
